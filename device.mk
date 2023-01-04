@@ -39,8 +39,7 @@ PRODUCT_VENDOR_KERNEL_HEADERS ?= device/asus/zenfone9-kernel/kernel-headers
 
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += \
-    $(LOCAL_PATH)/overlay \
-    vendor/omni/overlay/CarrierConfig
+    $(LOCAL_PATH)/overlay
 
 PRODUCT_PACKAGES += \
     aptxalsOverlay \
@@ -122,18 +121,12 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES_DEBUG += \
     bootctl
 
-# Charger images
-PRODUCT_PACKAGES += \
-    omni_charger_res_images \
-    animation.txt \
-    font_charger.png
-
 # Dalvik
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 
-# DeviceParts
-PRODUCT_PACKAGES += \
-    DeviceParts
+# DeviceParts - TODO AICPfy
+#PRODUCT_PACKAGES += \
+#    DeviceParts
 
 # Display
 PRODUCT_PACKAGES += \

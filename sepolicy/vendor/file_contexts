@@ -49,7 +49,7 @@
 /dev/pn553                                                                                     u:object_r:nfc_device:s0
 
 # Power
-/(vendor|system/vendor)/bin/hw/android\.hardware\.power-service-qti                            u:object_r:hal_power_default_exec:s0
+#/(vendor|system/vendor)/bin/hw/android\.hardware\.power-service-qti                            u:object_r:hal_power_default_exec:s0
 
 # Sensors
 /dev/asusLightSensor                                                                           u:object_r:sensor_device:s0

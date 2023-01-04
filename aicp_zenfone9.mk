@@ -19,28 +19,23 @@
 # product configuration (apps).
 #
 
-# Sample: This is where we'd set a backup provider if we had one
-# $(call inherit-product, device/sample/products/backup_overlay.mk)
+# Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
-# Get the prebuilt list of APNs
-$(call inherit-product, vendor/omni/config/gsm.mk)
-
-# Inherit from the common Open Source product configuration
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
-
-# must be before including omni part
-TARGET_BOOTANIMATION_SIZE := 1080p
+# Boot animation
+TARGET_SCREEN_WIDTH=1080
+TARGET_SCREEN_HEIGHT=2400
 
 # Inherit from our custom product configuration
-$(call inherit-product, vendor/omni/config/common.mk)
+$(call inherit-product, vendor/aicp/config/common_full_phone.mk)
 
 # Inherit from hardware-specific part of the product configuration
 $(call inherit-product, device/asus/zenfone9/device.mk)
 
 # Discard inherited values and use our own instead.
 PRODUCT_DEVICE := zenfone9
-PRODUCT_NAME := omni_zenfone9
+PRODUCT_NAME := aicp_zenfone9
 PRODUCT_BRAND := asus
 PRODUCT_MODEL := ASUS_AI2202
 PRODUCT_MANUFACTURER := asus
@@ -53,7 +48,7 @@ TARGET_DEVICE := WW_AI2202
 PRODUCT_SYSTEM_DEVICE := ASUS_AI2202
 PRODUCT_SYSTEM_NAME := WW_AI2202
 
-OMNI_PRODUCT_PROPERTIES += \
+PRODUCT_PRODUCT_PROPERTIES += \
     ro.build.product=AI2202
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
@@ -64,6 +59,10 @@ PRODUCT_BUILD_PROP_OVERRIDES += \
 
 VENDOR_RELEASE := 13/TKQ1.220807.001/33.0804.2060.73:user/release-keys
 BUILD_FINGERPRINT := asus/WW_AI2202/ASUS_AI2202:$(VENDOR_RELEASE)
-OMNI_BUILD_FINGERPRINT := asus/WW_AI2202/ASUS_AI2202:$(VENDOR_RELEASE)
+BUILD_FINGERPRINT := asus/WW_AI2202/ASUS_AI2202:$(VENDOR_RELEASE)
 
 PLATFORM_SECURITY_PATCH_OVERRIDE := 2022-12-05
+
+# AICP Device Maintainers
+PRODUCT_BUILD_PROP_OVERRIDES += \
+    DEVICE_MAINTAINERS="SpiritCroc"
