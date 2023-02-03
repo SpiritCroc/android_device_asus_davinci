@@ -20,6 +20,7 @@
 # product configuration (apps).
 #
 $(call inherit-product, vendor/asus/zenfone9/zenfone9-vendor.mk)
+$(call inherit-product, vendor/images/asus/zf9/zf9-app.mk)
 
 # fusefs / disable sdcardfs usage
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
@@ -32,10 +33,10 @@ TARGET_KERNEL_VERSION := 5.10
 TARGET_KERNEL_DIR ?= device/asus/zenfone9-kernel
 LOCAL_KERNEL := $(TARGET_KERNEL_DIR)/Image
 PRODUCT_COPY_FILES += \
-    $(LOCAL_KERNEL):kernel \
+    $(LOCAL_KERNEL):kernel
 
 # Prebuilt Kernel Headers
-PRODUCT_VENDOR_KERNEL_HEADERS ?= device/asus/zenfone9-kernel/kernel-headers
+TARGET_BOARD_KERNEL_HEADERS ?= device/asus/zenfone9-kernel/kernel-headers
 
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += \
@@ -134,13 +135,12 @@ PRODUCT_PACKAGES += \
     libion \
     libtinyxml2
 
-$(call inherit-product, vendor/qcom/opensource/display/config/display-product-vendor.mk)
+-include hardware/qcom-caf/sm8450/display/config/display-board.mk
+-include hardware/qcom-caf/sm8450/display/config/display-product.mk
+
 $(call inherit-product, vendor/qcom/opensource/commonsys/display/config/display-product-commonsys.mk)
 $(call inherit-product, vendor/qcom/opensource/commonsys-intf/display/config/display-interfaces-product.mk)
 $(call inherit-product, vendor/qcom/opensource/commonsys-intf/display/config/display-product-system.mk)
-
-PRODUCT_PACKAGES += \
-    libtinyalsa
 
 # DRM
 PRODUCT_PACKAGES += \
@@ -264,7 +264,6 @@ PRODUCT_COPY_FILES += \
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH) \
-    vendor/qcom/opensource/display \
     vendor/qcom/opensource/commonsys/display \
     vendor/qcom/opensource/commonsys-intf/display
 
