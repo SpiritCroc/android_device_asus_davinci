@@ -141,6 +141,20 @@ PRODUCT_PACKAGES += \
 $(call inherit-product, vendor/qcom/opensource/commonsys/display/config/display-product-commonsys.mk)
 $(call inherit-product, vendor/qcom/opensource/commonsys-intf/display/config/display-interfaces-product.mk)
 $(call inherit-product, vendor/qcom/opensource/commonsys-intf/display/config/display-product-system.mk)
+# https://gitlab.com/omnirom/android_vendor_qcom_opensource_display-commonsys-intf/-/commit/a6c3af610251a8cc596d0580fb54a9c0775708d7
+PRODUCT_PACKAGES += \
+    vendor.qti.hardware.display.config-V1-ndk_platform.vendor \
+    vendor.qti.hardware.display.config-V2-ndk_platform.vendor \
+    vendor.qti.hardware.display.config-V3-ndk_platform.vendor \
+    vendor.qti.hardware.display.config-V4-ndk_platform.vendor \
+    vendor.qti.hardware.display.config-V5-ndk_platform.vendor \
+    vendor.qti.hardware.display.config-V6-ndk_platform.vendor \
+    vendor.qti.hardware.display.config-V1-ndk_platform \
+    vendor.qti.hardware.display.config-V2-ndk_platform \
+    vendor.qti.hardware.display.config-V3-ndk_platform \
+    vendor.qti.hardware.display.config-V4-ndk_platform \
+    vendor.qti.hardware.display.config-V5-ndk_platform \
+    vendor.qti.hardware.display.config-V6-ndk_platform
 
 # DRM
 PRODUCT_PACKAGES += \
