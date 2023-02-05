@@ -264,6 +264,11 @@ PRODUCT_COPY_FILES += \
 # Properties
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 
+# Enable Secure Debugging
+ifneq ($(TARGET_BUILD_VARIANT),eng)
+  PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.adb.secure=1
+endif
+
 # Ramdisk
 $(call inherit-product, $(SRC_TARGET_DIR)/product/generic_ramdisk.mk)
 
