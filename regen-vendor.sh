@@ -50,6 +50,7 @@ VENDOR_SKIP_FILES_COMMON=(
 
     # Audio
     "etc/a2dp_audio_policy_configuration.xml"
+    "etc/default_volume_tables.xml"
     "etc/acdbdata/IDP_UPD/IDP_UPD_acdb_cal.acdb"
     "etc/acdbdata/IDP_UPD/IDP_UPD_workspaceFileXml.qwsp"
     "etc/acdbdata/IDP_UPD_diwali/IDP_UPD_diwali_acdb_cal.acdb"
@@ -475,6 +476,8 @@ VENDOR_SKIP_FILES_COMMON=(
     "lib64/libgralloc.qti.so"
     "lib/libdisplayconfig.qti.so"
     "lib64/libdisplayconfig.qti.so"
+    "lib/libdisplaydebug.so"
+    "lib64/libdisplaydebug.so"
     "lib/vendor.display.config@1.0.so"
     "lib/vendor.display.config@1.1.so"
     "lib/vendor.display.config@1.10.so"
@@ -537,6 +540,8 @@ VENDOR_SKIP_FILES_COMMON=(
     "lib64/vendor.qti.hardware.display.allocator@4.0.so"
     "lib64/vendor.qti.hardware.display.composer@1.0.so"
     "lib64/vendor.qti.hardware.display.composer@2.0.so"
+    "lib64/vendor.qti.hardware.display.composer@3.0.so"
+    "lib64/vendor.qti.hardware.display.composer@3.1.so"
     "lib64/vendor.qti.hardware.display.config-V1-ndk_platform.so"
     "lib64/vendor.qti.hardware.display.config-V2-ndk_platform.so"
     "lib64/vendor.qti.hardware.display.config-V3-ndk_platform.so"

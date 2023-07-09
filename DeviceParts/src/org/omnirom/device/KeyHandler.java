@@ -103,6 +103,7 @@ public class KeyHandler implements DeviceKeyHandler {
     private static final int POCKET_MIN_DELTA_MS = 5000;
 
     private static final String DT2W_CONTROL_PATH = "/proc/driver/dclick";
+    private static final String GOODIX_CONTROL_PATH = "/sys/devices/platform/soc/soc:goodix_gf3626@0/proximity_state";
 
     private static final String CLIENT_PACKAGE_NAME = "com.asus.camera";
     private static final String CLIENT_PACKAGE_PATH = "/data/misc/omni/client_package_name";
@@ -164,7 +165,7 @@ public class KeyHandler implements DeviceKeyHandler {
     private SensorEventListener mProximitySensor = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
-            mProxyIsNear = event.values[0] == 1;
+            mProxyIsNear = getCustomProxiIsNear(event);
 
             if (DEBUG_SENSOR) Log.i(TAG, "mProxyIsNear = " + mProxyIsNear + " mProxyWasNear = " + mProxyWasNear);
             if (mUseWaveCheck || mUsePocketCheck) {
@@ -180,6 +181,12 @@ public class KeyHandler implements DeviceKeyHandler {
                 }
                 mProxySensorTimestamp = SystemClock.elapsedRealtime();
                 mProxyWasNear = mProxyIsNear;
+            }
+            if (mUseProxiCheck) {
+                if (Utils.fileWritable(GOODIX_CONTROL_PATH)) {
+                    Utils.writeValue(GOODIX_CONTROL_PATH, mProxyIsNear ? "1" : "0");
+                    if (DEBUG_SENSOR) Log.i(TAG, " mProxyIsNear = " + mProxyIsNear);
+                }
             }
         }
 
@@ -279,7 +286,7 @@ public class KeyHandler implements DeviceKeyHandler {
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         mTiltSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_TILT_DETECTOR);
-        mPocketSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        mPocketSensor = getSensor(mSensorManager, getCustomProxiSensor());
         IntentFilter systemStateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         systemStateFilter.addAction(Intent.ACTION_SCREEN_OFF);
         systemStateFilter.addAction(Intent.ACTION_USER_SWITCHED);
@@ -319,6 +326,10 @@ public class KeyHandler implements DeviceKeyHandler {
                     if (DEBUG) Log.i(TAG, "intent = " + intent);
                     mContext.startActivity(intent);
             }
+        }
+        boolean value2 = getGestureValueForMusicCode(fpcode);
+        if (value2 && !mDispOn){
+            isFpgesture = true;
         }
         return isFpgesture;
     }
@@ -426,9 +437,11 @@ public class KeyHandler implements DeviceKeyHandler {
     private void onDisplayOn() {
         if (DEBUG) Log.i(TAG, "Display on");
         if (enableProxiSensor()) {
+            if (DEBUG_SENSOR) Log.i(TAG, "Unregister proxi sensor");
             mSensorManager.unregisterListener(mProximitySensor, mPocketSensor);
         }
         if (mUseTiltCheck) {
+            if (DEBUG_SENSOR) Log.i(TAG, "Unregister tilt sensor");
             mSensorManager.unregisterListener(mTiltSensorListener, mTiltSensor);
         }
         if ((mClientObserver == null) && (isASUSCameraAvail)) {
@@ -448,11 +461,13 @@ public class KeyHandler implements DeviceKeyHandler {
         if (DEBUG) Log.i(TAG, "Display off");
         if (enableProxiSensor()) {
             mProxyWasNear = false;
+            if (DEBUG_SENSOR) Log.i(TAG, "Register proxi sensor ");
             mSensorManager.registerListener(mProximitySensor, mPocketSensor,
                     SensorManager.SENSOR_DELAY_NORMAL);
             mProxySensorTimestamp = SystemClock.elapsedRealtime();
         }
         if (mUseTiltCheck) {
+            if (DEBUG_SENSOR) Log.i(TAG, "Register tilt sensor ");
             mSensorManager.registerListener(mTiltSensorListener, mTiltSensor,
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
@@ -564,20 +579,36 @@ public class KeyHandler implements DeviceKeyHandler {
             case KEY_GESTURE_Z:
                 return Settings.System.getStringForUser(mContext.getContentResolver(),
                     GestureSettings.DEVICE_GESTURE_MAPPING_5, UserHandle.USER_CURRENT);
-            case  KEY_GESTURE_PAUSE:
-                if (DEBUG) Log.i(TAG, "Music Play/Pause");
-                OmniUtils.sendKeycode(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
-                break;
-            case KEY_GESTURE_FORWARD:
-                if (DEBUG) Log.i(TAG, "Music Next");
-                OmniUtils.sendKeycode(KeyEvent.KEYCODE_MEDIA_NEXT);
-                break;
-            case KEY_GESTURE_REWIND:
-                if (DEBUG) Log.i(TAG, "Music Previous");
-                OmniUtils.sendKeycode(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
-                break;
         }
         return null;
+    }
+    
+    private boolean getGestureValueForMusicCode(int scanCode) {
+        switch(scanCode) {
+            case KEY_GESTURE_PAUSE:
+                if (DEBUG) Log.i(TAG, "Music Play/Pause");
+                    mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
+                    OmniVibe.performHapticFeedbackLw(HapticFeedbackConstants.LONG_PRESS, false, mContext);
+                    dispatchMediaKeyWithWakeLockToAudioService(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
+                return true;
+            case KEY_GESTURE_FORWARD:
+                if (DEBUG) Log.i(TAG, "Music Next");
+                if (isMusicActive()) {
+                    mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
+                    OmniVibe.performHapticFeedbackLw(HapticFeedbackConstants.LONG_PRESS, false, mContext);
+                    dispatchMediaKeyWithWakeLockToAudioService(KeyEvent.KEYCODE_MEDIA_NEXT);
+                }
+                return true;
+            case KEY_GESTURE_REWIND:
+                if (DEBUG) Log.i(TAG, "Music Previous");
+                if (isMusicActive()) {
+                    mGestureWakeLock.acquire(GESTURE_WAKELOCK_DURATION);
+                    OmniVibe.performHapticFeedbackLw(HapticFeedbackConstants.LONG_PRESS, false, mContext);
+                    dispatchMediaKeyWithWakeLockToAudioService(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
+                }
+                return true;
+        }
+        return false;
     }
 
     private String getGestureValueForFPScanCode(int scanCode, long eventTime) {
@@ -614,6 +645,16 @@ public class KeyHandler implements DeviceKeyHandler {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean getCustomProxiIsNear(SensorEvent event) {
+        return event.values[0] < mPocketSensor.getMaximumRange();
+    }
+
+    @Override
+    public String getCustomProxiSensor() {
+        return "android.sensor.proximity2";
     }
 
     IStatusBarService getStatusBarService() {

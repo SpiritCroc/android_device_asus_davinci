@@ -1,3 +1,6 @@
+af.fast_track_multiplier=1
+audio.offload.video=false
+audio.deep_buffer.media=true
 audio.sys.noisy.broadcast.delay=500
 audio.sys.mute.latency.factor=2
 audio.sys.routing.latency=0
@@ -23,6 +26,7 @@ bluetooth.hardware.power.rx_cur_ma=28
 bluetooth.hardware.power.tx_cur_ma=36
 bluetooth.profile.asha.central.enabled?=true
 bluetooth.profile.a2dp.source.enabled?=true
+bluetooth.profile.avrcp.controller.enabled?=true
 bluetooth.profile.avrcp.target.enabled?=true
 bluetooth.profile.bas.client.enabled?=true
 bluetooth.profile.gatt.enabled?=true
