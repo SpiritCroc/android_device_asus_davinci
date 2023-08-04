@@ -264,6 +264,7 @@ BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 
 # Enable Secure Debugging
 ifneq ($(TARGET_BUILD_VARIANT),eng)
+  PRODUCT_SYSTEM_DEFAULT_PROPERTIES += ro.adb.secure=1
   PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.adb.secure=1
 endif
 
