@@ -106,6 +106,8 @@ endif
 TARGET_SCREEN_DENSITY := 440
 SOONG_CONFIG_qtidisplay_displayconfig_enabled := true
 SOONG_CONFIG_qtidisplaycommonsys_displayconfig_enabled := true
+TARGET_GRALLOC_HANDLE_HAS_RESERVED_SIZE := false
+TARGET_GRALLOC_HANDLE_HAS_CUSTOM_CONTENT_MD_RESERVED_SIZE := false
 
 # DRM
 TARGET_ENABLE_MEDIADRM_64 := true
