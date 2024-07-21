@@ -28,7 +28,7 @@ import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.os.ServiceManager;
-import androidx.preference.PreferenceFragment;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
@@ -44,11 +44,12 @@ import android.widget.ListView;
 import android.util.Log;
 import java.util.Map;
 
-public class DeviceSettings extends PreferenceFragment implements
+public class DeviceSettings extends PreferenceFragmentCompat implements
         Preference.OnPreferenceChangeListener {
 
     protected static final String DEFAULT_FPS_VALUE = "60";
     private static final String KEY_CATEGORY_SCREEN = "screen";
+    public static final String KEY_GAME_SWITCH = "game_refresh_rate";
     public static final String KEY_GLOVE_SWITCH = "glove";
     private static final String KEY_FRAME_MODE = "frame_mode_key";
     private static final String KEY_FRAME_CATEGORY = "frame_mode_main";
@@ -61,6 +62,7 @@ public class DeviceSettings extends PreferenceFragment implements
 
     private static ListPreference mFrameModeRate;
     private static Preference mWizard;
+    private static TwoStatePreference mGameModeSwitch;
     private static TwoStatePreference mGloveModeSwitch;
 
     private static final String SURFACE_FLINGER_SERVICE_KEY = "SurfaceFlinger";
@@ -80,6 +82,11 @@ public class DeviceSettings extends PreferenceFragment implements
         mFrameModeRate.setValue(Integer.toString(framevalue));
         mFrameModeRate.setSummary(mFrameModeRate.getEntry());
         mFrameModeRate.setOnPreferenceChangeListener(this);
+
+        mGameModeSwitch = (TwoStatePreference) findPreference(KEY_GAME_SWITCH);
+        mGameModeSwitch.setEnabled(GameModeSwitch.isSupported());
+        mGameModeSwitch.setChecked(GameModeSwitch.isCurrentlyEnabled(this.getContext()));
+        mGameModeSwitch.setOnPreferenceChangeListener(new GameModeSwitch(getContext()));
 
         mGloveModeSwitch = (TwoStatePreference) findPreference(KEY_GLOVE_SWITCH);
         mGloveModeSwitch.setEnabled(GloveModeSwitch.isSupported());

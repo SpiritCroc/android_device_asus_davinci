@@ -17,7 +17,6 @@
 */
 package org.omnirom.device;
 
-import static android.view.WindowManager.TAKE_SCREENSHOT_FULLSCREEN;
 import static android.view.WindowManager.ScreenshotSource.SCREENSHOT_GLOBAL_ACTIONS;
 
 import android.app.ActivityManagerNative;
@@ -66,10 +65,11 @@ import com.android.internal.util.ArrayUtils;
 import com.android.internal.util.ScreenshotHelper;
 import com.android.internal.statusbar.IStatusBarService;
 
-import org.omnirom.omnilibcore.utils.DeviceKeyHandler;
-import org.omnirom.omnilibcore.utils.OmniUtils;
-import org.omnirom.omnilibcore.utils.OmniVibe;
-import org.omnirom.omnilibcore.utils.PackageUtils;
+import org.omnirom.omnilib.utils.DeviceKeyHandler;
+import org.omnirom.omnilib.utils.OmniSettings;
+import org.omnirom.omnilib.utils.OmniUtils;
+import org.omnirom.omnilib.utils.OmniVibe;
+import org.omnirom.omnilib.utils.PackageUtils;
 
 public class KeyHandler implements DeviceKeyHandler {
 
@@ -215,10 +215,10 @@ public class KeyHandler implements DeviceKeyHandler {
 
         void observe() {
             mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.OMNI_DEVICE_PROXI_CHECK_ENABLED),
+                    OmniSettings.OMNI_DEVICE_PROXI_CHECK_ENABLED),
                     false, this);
             mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.OMNI_DEVICE_FEATURE_SETTINGS),
+                    OmniSettings.OMNI_DEVICE_FEATURE_SETTINGS),
                     false, this);
             mContext.getContentResolver().registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.DOUBLE_TAP_TO_WAKE),
@@ -235,7 +235,7 @@ public class KeyHandler implements DeviceKeyHandler {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.OMNI_DEVICE_FEATURE_SETTINGS))){
+                    OmniSettings.OMNI_DEVICE_FEATURE_SETTINGS))){
                 updateDozeSettings();
                 return;
             }
@@ -244,7 +244,7 @@ public class KeyHandler implements DeviceKeyHandler {
 
         public void update() {
             mUseProxiCheck = Settings.System.getIntForUser(
-                    mContext.getContentResolver(), Settings.System.OMNI_DEVICE_PROXI_CHECK_ENABLED, 1,
+                    mContext.getContentResolver(), OmniSettings.OMNI_DEVICE_PROXI_CHECK_ENABLED, 1,
                     UserHandle.USER_CURRENT) == 1;
             mDoubleTapToWake = Settings.Secure.getInt(
                     mContext.getContentResolver(), Settings.Secure.DOUBLE_TAP_TO_WAKE, 1) == 1;
@@ -550,7 +550,7 @@ public class KeyHandler implements DeviceKeyHandler {
         } else if (value.equals(AppSelectListPreference.SCREENSHOT_ENTRY)) {
             final ScreenshotHelper screenshotHelper = new ScreenshotHelper(mContext);
             mHandler.postDelayed(() -> {
-                screenshotHelper.takeScreenshot(TAKE_SCREENSHOT_FULLSCREEN, SCREENSHOT_GLOBAL_ACTIONS,
+                screenshotHelper.takeScreenshot(SCREENSHOT_GLOBAL_ACTIONS,
                     mHandler, null);
             }, 1000);
             OmniVibe.performHapticFeedbackLw(HapticFeedbackConstants.LONG_PRESS, false, mContext);
@@ -627,7 +627,7 @@ public class KeyHandler implements DeviceKeyHandler {
 
     private void updateDozeSettings() {
         String value = Settings.System.getStringForUser(mContext.getContentResolver(),
-                    Settings.System.OMNI_DEVICE_FEATURE_SETTINGS,
+                    OmniSettings.OMNI_DEVICE_FEATURE_SETTINGS,
                     UserHandle.USER_CURRENT);
         if (DEBUG) Log.i(TAG, "Doze settings = " + value);
         if (!TextUtils.isEmpty(value)) {
@@ -671,7 +671,7 @@ public class KeyHandler implements DeviceKeyHandler {
         public void onEvent(int event, String file) {
             String pkgName = Utils.getFileValue(CLIENT_PACKAGE_PATH, "0");
             if (event == FileObserver.MODIFY) {
-                Log.d(TAG, "client_package" + file + " and " + pkgName);
+                Log.d(TAG, "Camera name in use = " + pkgName);
                 SystemProperties.set(VENDOR_PROPERTY_USINGNAME, pkgName);
             }
         }

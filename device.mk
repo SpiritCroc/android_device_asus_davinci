@@ -31,6 +31,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 # Prebuilt Kernel Binary
 TARGET_KERNEL_VERSION := 5.10
 TARGET_KERNEL_DIR ?= device/asus/zenfone9-kernel
+TARGET_PREBUILT_KERNEL := device/asus/zenfone9-kernel/Image
 LOCAL_KERNEL := $(TARGET_KERNEL_DIR)/Image
 PRODUCT_COPY_FILES += \
     $(LOCAL_KERNEL):kernel
@@ -45,6 +46,8 @@ DEVICE_PACKAGE_OVERLAYS += \
 PRODUCT_PACKAGES += \
     FrameworksResOverlay \
     FrameworksResVendor \
+    OmniRomResInternalOverlay \
+    SettingsOverlay \
     SettingsProviderOverlay \
     SystemUIOverlay \
     TeleServiceOverlay \
@@ -52,6 +55,7 @@ PRODUCT_PACKAGES += \
     WifiOverlay
 
 # A/B
+AB_OTA_UPDATER := true
 ENABLE_VIRTUAL_AB := true
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_vendor_ramdisk.mk)
 
@@ -80,9 +84,8 @@ PRODUCT_PACKAGES += \
     AntHalService
 
 # Api
-BOARD_API_LEVEL := 31
-BOARD_SHIPPING_API_LEVEL := $(BOARD_API_LEVEL)
-PRODUCT_SHIPPING_API_LEVEL := $(BOARD_API_LEVEL)
+BOARD_SHIPPING_API_LEVEL := 31
+PRODUCT_SHIPPING_API_LEVEL := $(BOARD_SHIPPING_API_LEVEL)
 
 # Atrace
 PRODUCT_PACKAGES += \
@@ -92,7 +95,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.audio@7.0-impl \
     android.hardware.audio.effect@7.0-impl \
-    android.hardware.audio.service
+    android.hardware.audio.service \
+    android.media.audio.common.types-V1-cpp \
+    libaudioroute.vendor
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_cape/audio_policy_configuration.xml \
@@ -100,6 +105,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_effects.conf:$(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_cape/audio_effects.conf \
     $(LOCAL_PATH)/audio/audio_effects.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_cape/audio_effects.xml \
     $(LOCAL_PATH)/audio/bluetooth_hearing_aid_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/bluetooth_hearing_aid_audio_policy_configuration.xml
+
+# Battery
+PRODUCT_PACKAGES += \
+    libsysutils.vendor
 
 # Biometric
 PRODUCT_PACKAGES += \
@@ -116,7 +125,9 @@ PRODUCT_PACKAGES_DEBUG += \
 
 # Camera
 PRODUCT_PACKAGES += \
-    Aperture
+    android.frameworks.sensorservice@1.0.vendor \
+    Aperture \
+    libexif.vendor
 
 # Dalvik
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
@@ -154,7 +165,8 @@ PRODUCT_PACKAGES += \
 
 # DRM
 PRODUCT_PACKAGES += \
-    android.hardware.drm@1.4-service.clearkey
+    android.hardware.drm@1.4.vendor \
+    android.hardware.drm-service.clearkey
 
 # fastbootd
 PRODUCT_PACKAGES += \
@@ -198,7 +210,9 @@ PRODUCT_COPY_FILES += \
 
 # Keymint
 PRODUCT_PACKAGES += \
-    android.hardware.security.keymint-V1-ndk_platform.vendor
+    android.hardware.security.keymint-V1-ndk_platform.vendor \
+    android.hardware.security.sharedsecret-V1-ndk_platform.vendor \
+    android.hardware.security.rkp-V1-ndk.vendor
 
 # Lights
 PRODUCT_PACKAGES += \
@@ -212,8 +226,16 @@ PRODUCT_PACKAGES += \
     librs_jni
 
 # Media
+PRODUCT_COPY_FILES += \
+    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_audio.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_c2.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_c2_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2_audio.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_c2_video.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2_video.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_telephony.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_video.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_video_le.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_video_le.xml
+
 PRODUCT_PACKAGES += \
-    libavservices_minijail \
     libavservices_minijail.vendor \
     libavservices_minijail_vendor \
     libgui_vendor \
@@ -223,9 +245,14 @@ PRODUCT_PACKAGES += \
     libmm-omxcore \
     libstagefright_softomx.vendor \
     libstagefrighthw \
-    libplatformconfig
+    libplatformconfig \
+    libsqlite.vendor
 
 $(call inherit-product, hardware/qcom-caf/sm8450/media/product.mk)
+
+# Memtrack
+PRODUCT_PACKAGES += \
+    android.hardware.memtrack-V1-ndk_platform.vendor
 
 # NFC
 PRODUCT_PACKAGES += \
@@ -305,6 +332,9 @@ PRODUCT_PACKAGES += \
     qti_telephony_utils.xml \
     qti-telephony-utils-prd \
     qti_telephony_utils_prd.xml \
+    libcurl.vendor \
+    libjsoncpp.vendor \
+    libsqlite.vendor \
     tcmiface
 
 # Update engine
@@ -324,6 +354,9 @@ PRODUCT_PACKAGES_DEBUG += \
 TARGET_HAS_DIAG_ROUTER := true
 $(call inherit-product, vendor/qcom/opensource/usb/vendor_product.mk)
 
+PRODUCT_PACKAGES += \
+    libusbhost.vendor
+
 # Vendor service manager
 PRODUCT_PACKAGES += \
     vndservicemanager
@@ -340,16 +373,9 @@ PRODUCT_COPY_FILES += \
 
 # Wifi
 PRODUCT_PACKAGES += \
-    android.hardware.wifi@1.0-service \
+    android.hardware.wifi-service \
     hostapd \
     libwifi-hal-qcom \
     libwpa_client \
     wpa_supplicant \
     wpa_supplicant.conf
-
-# Wifi Display
-PRODUCT_PACKAGES += \
-    libnl
-
-PRODUCT_BOOT_JARS += \
-    WfdCommon
