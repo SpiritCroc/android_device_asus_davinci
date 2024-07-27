@@ -254,6 +254,10 @@ $(call inherit-product, hardware/qcom-caf/sm8450/media/product.mk)
 PRODUCT_PACKAGES += \
     android.hardware.memtrack-V1-ndk_platform.vendor
 
+# Mount Point symlink
+PRODUCT_PACKAGES += \
+    mnt_point_factory_symlink
+
 # NFC
 PRODUCT_PACKAGES += \
     NfcNci \
@@ -379,3 +383,8 @@ PRODUCT_PACKAGES += \
     libwpa_client \
     wpa_supplicant \
     wpa_supplicant.conf
+
+# WiFi firmware symlinks
+PRODUCT_PACKAGES += \
+    firmware_wlan_mac.bin_symlink \
+    firmware_WCNSS_qcom_cfg.ini_symlink
