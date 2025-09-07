@@ -1,5 +1,5 @@
 runtime_resource_overlay {
     name: "OmniRomResInternalOverlay",
-    sdk_version: "current",
+    theme: "OmniRomResInternalOverlay",
     product_specific: true,
 }

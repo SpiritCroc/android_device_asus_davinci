@@ -45,7 +45,7 @@ DEVICE_PACKAGE_OVERLAYS += \
 
 PRODUCT_PACKAGES += \
     FrameworksResOverlay \
-    FrameworksResVendor \
+    FrameworksResVendorOverlay \
     OmniRomResInternalOverlay \
     SettingsOverlay \
     SettingsProviderOverlay \
@@ -97,7 +97,7 @@ PRODUCT_PACKAGES += \
     android.hardware.audio.effect@7.0-impl \
     android.hardware.audio.service \
     android.media.audio.common.types-V1-cpp \
-    libaudioroute.vendor
+    libhapticgenerator
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_cape/audio_policy_configuration.xml \
@@ -105,10 +105,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_effects.conf:$(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_cape/audio_effects.conf \
     $(LOCAL_PATH)/audio/audio_effects.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_cape/audio_effects.xml \
     $(LOCAL_PATH)/audio/bluetooth_hearing_aid_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/bluetooth_hearing_aid_audio_policy_configuration.xml
-
-# Battery
-PRODUCT_PACKAGES += \
-    libsysutils.vendor
 
 # Biometric
 PRODUCT_PACKAGES += \
@@ -123,12 +119,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES_DEBUG += \
     bootctl
 
-# Camera
-PRODUCT_PACKAGES += \
-    android.frameworks.sensorservice@1.0.vendor \
-    Aperture \
-    libexif.vendor
-
 # Dalvik
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 
@@ -138,34 +128,15 @@ $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 
 # Display
 PRODUCT_PACKAGES += \
-    android.hardware.graphics.common-V2-ndk_platform.vendor \
     libion \
-    libtinyxml2
+    libtinyxml2 \
+    vendor.qti.hardware.memtrack-service
 
 -include hardware/qcom-caf/sm8450/display/config/display-board.mk
 -include hardware/qcom-caf/sm8450/display/config/display-product.mk
 
-$(call inherit-product, vendor/qcom/opensource/commonsys/display/config/display-product-commonsys.mk)
-$(call inherit-product, vendor/qcom/opensource/commonsys-intf/display/config/display-interfaces-product.mk)
-$(call inherit-product, vendor/qcom/opensource/commonsys-intf/display/config/display-product-system.mk)
-# https://gitlab.com/omnirom/android_vendor_qcom_opensource_display-commonsys-intf/-/commit/a6c3af610251a8cc596d0580fb54a9c0775708d7
-PRODUCT_PACKAGES += \
-    vendor.qti.hardware.display.config-V1-ndk_platform.vendor \
-    vendor.qti.hardware.display.config-V2-ndk_platform.vendor \
-    vendor.qti.hardware.display.config-V3-ndk_platform.vendor \
-    vendor.qti.hardware.display.config-V4-ndk_platform.vendor \
-    vendor.qti.hardware.display.config-V5-ndk_platform.vendor \
-    vendor.qti.hardware.display.config-V6-ndk_platform.vendor \
-    vendor.qti.hardware.display.config-V1-ndk_platform \
-    vendor.qti.hardware.display.config-V2-ndk_platform \
-    vendor.qti.hardware.display.config-V3-ndk_platform \
-    vendor.qti.hardware.display.config-V4-ndk_platform \
-    vendor.qti.hardware.display.config-V5-ndk_platform \
-    vendor.qti.hardware.display.config-V6-ndk_platform
-
 # DRM
 PRODUCT_PACKAGES += \
-    android.hardware.drm@1.4.vendor \
     android.hardware.drm-service.clearkey
 
 # fastbootd
@@ -181,25 +152,14 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_BOOT_JARS += qcom.fmradio
 
-# GPS
-PRODUCT_PACKAGES += \
-    android.hardware.gnss-V1-ndk_platform.vendor
-
 # Health
 PRODUCT_PACKAGES += \
     android.hardware.health@2.1-impl-qti \
     android.hardware.health@2.1-service
 
-# HIDL
+# Health for charing control
 PRODUCT_PACKAGES += \
-    android.hidl.base@1.0 \
-    android.hidl.base@1.0.vendor \
-    libhwbinder.vendor
-
-# Identity
-PRODUCT_PACKAGES += \
-    android.hardware.identity-V3-ndk_platform.vendor
-
+    vendor.lineage.health-service.default
 # Input
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/fts_ts.idc:system/usr/idc/fts_ts.idc \
@@ -207,12 +167,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/fts_ts.kl:system/usr/keylayout/fts_ts.kl \
     $(LOCAL_PATH)/keylayout/goodixfp.kl:system/usr/keylayout/goodixfp.kl \
     $(LOCAL_PATH)/keylayout/i-rocks_Bluetooth_Keyboard.kl:system/usr/keylayout/i-rocks_Bluetooth_Keyboard.kl
-
-# Keymint
-PRODUCT_PACKAGES += \
-    android.hardware.security.keymint-V1-ndk_platform.vendor \
-    android.hardware.security.sharedsecret-V1-ndk_platform.vendor \
-    android.hardware.security.rkp-V1-ndk.vendor
 
 # Lights
 PRODUCT_PACKAGES += \
@@ -225,42 +179,16 @@ PRODUCT_PACKAGES += \
     VisualizationWallpapers \
     librs_jni
 
-# Media
-PRODUCT_COPY_FILES += \
-    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_audio.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_c2.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_c2_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2_audio.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_c2_video.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_c2_video.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_telephony.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_video.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_video_le.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_video_le.xml
-
-PRODUCT_PACKAGES += \
-    libavservices_minijail.vendor \
-    libavservices_minijail_vendor \
-    libgui_vendor \
-    libOmxCore \
-    libcodec2_hidl@1.0.vendor \
-    libcodec2_vndk.vendor \
-    libmm-omxcore \
-    libstagefright_softomx.vendor \
-    libstagefrighthw \
-    libplatformconfig \
-    libsqlite.vendor
-
-$(call inherit-product, hardware/qcom-caf/sm8450/media/product.mk)
-
-# Memtrack
-PRODUCT_PACKAGES += \
-    android.hardware.memtrack-V1-ndk_platform.vendor
-
 # Mount Point symlink
 PRODUCT_PACKAGES += \
-    mnt_point_factory_symlink
+    mnt_point_factory_symlink \
+    vendor_asusfw_mountpoint \
+    vendor_bt_firmware_mountpoint \
+    vendor_xrom_mountpoint \
+    vendor_firmware_mnt_mountpoint
 
 # NFC
 PRODUCT_PACKAGES += \
-    NfcNci \
     Tag \
     SecureElement \
     com.android.nfc_extras
@@ -279,7 +207,6 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # Power
 PRODUCT_PACKAGES += \
-    android.hardware.power@1.2.vendor \
     android.hardware.power-service-qti
 
 # Prebuilt
@@ -299,6 +226,11 @@ ifneq ($(TARGET_BUILD_VARIANT),eng)
   PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.adb.secure=1
 endif
 
+# QMI
+PRODUCT_PACKAGES += \
+    libqti_vndfwk_detect_vendor \
+    libvndfwk_detect_jni.qti_vendor
+
 # Ramdisk
 $(call inherit-product, $(SRC_TARGET_DIR)/product/generic_ramdisk.mk)
 
@@ -312,9 +244,11 @@ PRODUCT_COPY_FILES += \
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
-    $(LOCAL_PATH) \
-    vendor/qcom/opensource/commonsys/display \
-    vendor/qcom/opensource/commonsys-intf/display
+    $(LOCAL_PATH)
+
+# Sensors
+PRODUCT_PACKAGES += \
+    android.hardware.sensors-service.multihal
 
 # Systemhelper
 PRODUCT_PACKAGES += \
@@ -336,9 +270,6 @@ PRODUCT_PACKAGES += \
     qti_telephony_utils.xml \
     qti-telephony-utils-prd \
     qti_telephony_utils_prd.xml \
-    libcurl.vendor \
-    libjsoncpp.vendor \
-    libsqlite.vendor \
     tcmiface
 
 # Update engine
@@ -358,9 +289,6 @@ PRODUCT_PACKAGES_DEBUG += \
 TARGET_HAS_DIAG_ROUTER := true
 $(call inherit-product, vendor/qcom/opensource/usb/vendor_product.mk)
 
-PRODUCT_PACKAGES += \
-    libusbhost.vendor
-
 # Vendor service manager
 PRODUCT_PACKAGES += \
     vndservicemanager
@@ -369,18 +297,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     vendor.qti.hardware.vibrator.service
 
-# VNDK
-PRODUCT_EXTRA_VNDK_VERSIONS := 30 31 32
-
-PRODUCT_COPY_FILES += \
-    prebuilts/vndk/v32/arm64/arch-arm64-armv8-a/shared/vndk-sp/libhidlbase.so:$(TARGET_COPY_OUT_VENDOR)/lib64/libhidlbase-v32.so
-
 # Wifi
 PRODUCT_PACKAGES += \
     android.hardware.wifi-service \
     hostapd \
     libwifi-hal-qcom \
-    libwpa_client \
     wpa_supplicant \
     wpa_supplicant.conf
 
